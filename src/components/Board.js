@@ -48,48 +48,62 @@ const Board = () => {
         }
       }
     };
-    checkForWinner();
+    if (winner === null) {
+      checkForWinner();
+    }
   }, [renderText]);
 
   const renderWinner = () => {
     if (winner) {
-      return <div>{winner} wins!</div>;
+      return (
+        <div className="game-over">
+          <h3 className="ui header">{winner} wins!</h3>
+          <button
+            className="ui button"
+            onClick={() => window.location.reload(false)}
+          >
+            Play again?
+          </button>
+        </div>
+      );
     }
   };
 
   const changeText = (rowIndex, boxIndex, player, clicked, setClicked) => {
-    if (clicked === false) {
-      const newText = [];
-      const newRow = [];
-      const editRow = renderText[rowIndex];
+    if (winner === null) {
+      if (clicked === false) {
+        const newText = [];
+        const newRow = [];
+        const editRow = renderText[rowIndex];
 
-      renderText.map((el, i) => {
-        if (i !== rowIndex) {
-          newText.push(el);
-        } else {
-          editRow.map((el, i) => {
-            if (i !== boxIndex) {
-              newRow.push(el);
-            } else {
-              if (player === 'Player 1') {
-                newRow.push('X');
-              } else if (player === 'Player 2') {
-                newRow.push('O');
+        renderText.map((el, i) => {
+          if (i !== rowIndex) {
+            newText.push(el);
+          } else {
+            editRow.map((el, i) => {
+              if (i !== boxIndex) {
+                newRow.push(el);
+              } else {
+                if (player === 'Player 1') {
+                  newRow.push('X');
+                } else if (player === 'Player 2') {
+                  newRow.push('O');
+                }
               }
-            }
-          });
-          newText.push(newRow);
-        }
-      });
+            });
+            newText.push(newRow);
+          }
+        });
 
-      setRenderText(newText);
-      if (player === 'Player 1') {
-        setPlayer('Player 2');
-      } else if (player === 'Player 2') {
-        setPlayer('Player 1');
+        setRenderText(newText);
+        if (player === 'Player 1') {
+          setPlayer('Player 2');
+        } else if (player === 'Player 2') {
+          setPlayer('Player 1');
+        }
       }
+      setClicked(true);
     }
-    setClicked(true);
   };
 
   const renderBoard = renderText.map((el, index) => {
@@ -101,12 +115,13 @@ const Board = () => {
         setRenderRowText={setRenderText}
         changeText={changeText}
         player={player}
+        winner={winner}
       />
     );
   });
 
   return (
-    <div>
+    <div className="board">
       {renderWinner()}
       {renderBoard}
     </div>
